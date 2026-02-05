@@ -6,7 +6,9 @@ def get_tag_distance(scm_version: ScmVersion) -> str:
         return scm_version.format_with("tag")
     else:
         version_parts = list(scm_version.tag.release)
-        if len(version_parts) != SEMVER_LEN or version_parts[-1] != 0:
-            raise ValueError("tag must be in format v#.#.0")
+        while len(version_parts) < SEMVER_LEN:
+            version_parts.append(0)
+        if len(version_parts) > SEMVER_LEN or version_parts[-1] != 0:
+            raise ValueError(f"tag {scm_version.tag.release!r} is not in format v#.#.0")
         version_parts[2] = scm_version.distance
         return ".".join([str(a) for a in version_parts])
